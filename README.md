@@ -25,7 +25,7 @@ How to Use
 **Import metrics library**
 
 ```javascript
-metrics = require('metrics');
+var metrics = require('metrics');
 ```
 
 **Create your metrics**
