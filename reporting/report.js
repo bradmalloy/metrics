@@ -27,10 +27,10 @@ Report.prototype.addMetric = function(eventName, metric) {
   if (!this.trackedMetrics[parts.ns][parts.name]) {
     this.trackedMetrics[parts.ns][parts.name] = metric;
   }
-  if (metric.metadata != {} && !this.metadata[parts.ns]) {
+  if (!this.metadata[parts.ns]) {
     this.metadata[parts.ns] = {};
   }
-  if (metric.metadata != {} && !this.metadata[parts.ns][parts.name]) {
+  if (!this.metadata[parts.ns][parts.name]) {
     this.metadata[parts.ns][parts.name] = metric.metadata;
   }
 }
