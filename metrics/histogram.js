@@ -102,7 +102,7 @@ Histogram.prototype.values = function() {
 Histogram.prototype.printObj = function() {
   var percentiles = this.percentiles();
   return {
-      type: 'histogram'
+    metadata: this.metadata
     , min: this.min
     , max: this.max
     , sum: this.sum

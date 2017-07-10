@@ -35,5 +35,5 @@ Counter.prototype.clear = function() {
 }
 
 Counter.prototype.printObj = function() {
-  return {type: 'counter', count: this.count};
+  return {metadata: this.metadata, count: this.count};
 }
