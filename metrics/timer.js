@@ -5,11 +5,11 @@ var Meter = require('./meter'),
 /*
 *  Basically a timer tracks the rate of events and histograms the durations
 */
-var Timer = module.exports = function Timer() {
+var Timer = module.exports = function Timer(metadata) {
   this.meter = new Meter();
   this.histogram = new Histogram(new ExponentiallyDecayingSample(1028, 0.015));
   this.clear();
-  this.type = 'timer';
+  this.metadata = metadata || {};
 }
 
 Timer.prototype.update = function(duration) {
@@ -53,8 +53,8 @@ Timer.prototype.tick = function() { this.meter.tick(); } // primarily for testin
 Timer.prototype.rates = function() { return this.meter.rates(); }
 
 Timer.prototype.printObj = function() {
-  return {type: 'timer'
-      , duration: this.histogram.printObj()
+  return {
+      duration: this.histogram.printObj()
       , rate: this.meter.printObj()};
 }
 

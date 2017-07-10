@@ -7,9 +7,9 @@
  * transported via JSON without additional code, but not today. */
 var MAX_COUNTER_VALUE = Math.pow(2, 32); // 4294967296
 
-var Counter = module.exports = function Counter() {
+var Counter = module.exports = function Counter(metadata) {
   this.count = 0;
-  this.type = 'counter';
+  this.metadata = metadata || {};
 }
 
 Counter.prototype.inc = function(val) {
@@ -35,5 +35,5 @@ Counter.prototype.clear = function() {
 }
 
 Counter.prototype.printObj = function() {
-  return {type: 'counter', count: this.count};
+  return {count: this.count};
 }
