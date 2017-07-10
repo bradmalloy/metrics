@@ -61,7 +61,31 @@ reporter.start(1000);
 
 **Using Metadata**
 
-Metadata for metrics is included at creation time of a metric.  If none is provided, an empty object is used instead.  Types of metadata you might want to use include: type of metric, category, pretty name, link to documentation, data type, or units of measurement.  Metadata can be entered as an object literal or from JSON.  Metadata associated with a metric will be available through the /metricsmetadata endpoint if running the `Server` reporter.
+Metadata for metrics is included at creation time of a metric.  If none is provided, an empty object is used instead.  Types of metadata you might want to use include: type of metric, category, pretty name, link to documentation, data type, or units of measurement.  Metadata can be entered as an object literal or from JSON.  Metadata associated with a metric will be available through the /metricsmetadata endpoint if running the `Server` reporter.  For example, you could use an external JSON document (since this data rarely changes) and load it in your app:
+
+```json
+{
+  "myApp": {
+    "groupA": {
+      "thingA": {
+        "info": "http://link.to.the/docs",
+        "type": "count",
+        "data_type": "int",
+        "pretty_name": "Test Metric"
+      },
+      "thingB": {} // Etc...
+    }
+  }
+}
+```
+
+```javascript
+var myMeta = require('./metadata.json');
+// Histogram takes an optional sample, so be careful!
+var myHistogram = new metrics.Histogram(false, myMeta.myApp.groupA.thingB);
+// Nothing else does, so it's fine
+var myCounter = new metrics.Counter(myMeta.myApp.groupA.thingA);
+```
 
 Advanced Usage
 --------------
