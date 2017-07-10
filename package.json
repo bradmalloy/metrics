@@ -4,7 +4,7 @@
   "version": "0.1.13",
   "repository": {
     "type": "git",
-    "url": "git://github.com/mikejihbe/metrics.git"
+    "url": "git://github.com/bradmalloy/metrics.git"
   },
   "author": "Mike Ihbe <mikejihbe@gmail.com> (mikeihbe.com)",
   "directories": {
