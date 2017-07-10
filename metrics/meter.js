@@ -2,13 +2,13 @@ var EWMA = require('../stats/exponentially_weighted_moving_average.js');
 /*
 *  
 */
-var Meter = module.exports = function Meter() {
+var Meter = module.exports = function Meter(metadata) {
   this.m1Rate = EWMA.createM1EWMA();
   this.m5Rate = EWMA.createM5EWMA();
   this.m15Rate = EWMA.createM15EWMA();
   this.count = 0;
   this.startTime = (new Date).getTime();
-  this.type = 'meter';
+  this.metadata = metadata || {};
 }
 
 // Mark the occurence of n events

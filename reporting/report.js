@@ -15,11 +15,12 @@ var _evtparse = function (eventName){
 
 var Report = module.exports = function (trackedMetrics){
   this.trackedMetrics = trackedMetrics || {};
+  this.metadata = {};
 }
 
 Report.prototype.addMetric = function(eventName, metric) {
   var parts = _evtparse(eventName);
-
+  
   if (!this.trackedMetrics[parts.ns]) {
     this.trackedMetrics[parts.ns] = {};
   }

@@ -59,6 +59,10 @@ var reporter = new metrics.ConsoleReporter(report);
 reporter.start(1000);
 ```
 
+**Using Metadata**
+
+Metadata for metrics is included at creation time of a metric.  If none is provided, an empty object is used instead.  Types of metadata you might want to use include: type of metric, category, pretty name, link to documentation, data type, or units of measurement.  Metadata can be entered as an object literal or from JSON.  Metadata associated with a metric will be available through the /metricsmetadata endpoint if running the `Server` reporter.
+
 Advanced Usage
 --------------
 Typical production deployments have multiple node processes per server.  Rather than each process exposing metrics on different ports, it makes more sense to expose the metrics from the "master" process.  Writing a thin wrapper around this api to perform the process communication is trivial, with a message passing setup, the client processes could look something like this:
