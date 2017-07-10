@@ -54,8 +54,7 @@ Timer.prototype.rates = function() { return this.meter.rates(); }
 
 Timer.prototype.printObj = function() {
   return {
-      metadata: this.metadata
-      , duration: this.histogram.printObj()
+      duration: this.histogram.printObj()
       , rate: this.meter.printObj()};
 }
 

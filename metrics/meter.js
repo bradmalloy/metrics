@@ -46,8 +46,7 @@ Meter.prototype.meanRate = function() {
 
 Meter.prototype.printObj = function() {
   return {
-      metadata: this.metadata
-      , count: this.count
+      count: this.count
       , m1: this.oneMinuteRate()
       , m5: this.fiveMinuteRate()
       , m15: this.fifteenMinuteRate()
