@@ -11,10 +11,10 @@ var Server = module.exports = function Server(port, trackedMetrics) {
   this.report = new Report(trackedMetrics);
 
   this.server = http.createServer(function (req, res) {
-    if (req.url.match(/^\/metrics/)) {
+    if (req.url.match(/^\/metrics$/)) {
       res.writeHead(200, {'Content-Type': 'application/json'});
       res.end(JSON.stringify(self.report.summary()));
-    } else if (req.url.match(/^\/metricsmetadata/)) {
+    } else if (req.url.match(/^\/metricsmetadata$/)) {
       res.writeHead(200, {'Content-Type': 'application/json'});
       res.end(JSON.stringify(self.report.metadata));
     } else {
