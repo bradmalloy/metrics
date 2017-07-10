@@ -22,28 +22,37 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 How to Use
 ----------
 
-**Import Metrics**
+**Import metrics library**
 
 ```javascript
-metrics = require('metrics');
+var metrics = require('metrics');
 ```
 
-**Start a metrics Server**
+**Create your metrics**
+
+```javascript
+var myCounter = new metrics.Counter;
+var myMeter = new metrics.Meter;
+var myHistogram = new metrics.Histogram;
+var myTimer = new metrics.Timer;
+```
+
+**Start a metrics server**
 
 ```javascript
 var metricsServer = new metrics.Server(config.metricsPort || 9091);
 ```
 
-Servers are only one way to report your metrics.  It's actually a thin layer on top of metrics.Report, which you could use to build other reporting mechanisms.
+Servers are only one way to report your metrics.  It's actually a thin layer on top of metrics.Report, which you could use to build other reporting mechanisms.  Some other reporting methods include Grapite, console reporting, and CSV reporting.
 
 **Add the metrics to the server**
 
 ```javascript
-metricsServer.addMetric('com.co.thingA', counter);
-metricsServer.addMetric('com.co.thingB', hist1);
-metricsServer.addMetric('com.co.thingC', hist2);
-metricsServer.addMetric('com.co.thingD', meter);
-metricsServer.addMetric('com.co.thingE', timer);
+metricsServer.addMetric('myApp.groupA.thingA', myCounter);
+metricsServer.addMetric('myApp.groupA.thingB', myHistogram);
+metricsServer.addMetric('myApp.groupA.thingC', mySecondHisto);
+metricsServer.addMetric('myApp.groupB.thingD', myMeter);
+metricsServer.addMetric('myApp.groupB.thingE', myTimer);
 ```
 
 **Setting up a Reporter**
@@ -59,7 +68,103 @@ var reporter = new metrics.ConsoleReporter(report);
 reporter.start(1000);
 ```
 
-**Using Metadata**
+Types of Metrics
+----------------
+This library includes four different types of metrics, listed here in increasing order of complexity. All metrics are created by calling:
+
+```javascript
+// Require metrics once
+var metrics = require('metrics');
+// Create your metric
+var myMetric = metrics.Counter;
+```
+
+**Counter**
+
+A Counter is a simple metric which tracks a single numerical value. It can be modified by calling `myMetric.inc(x)` or `myMetric.dec(x)`, where `x` is an integer. Counters are the simplest metric, and their output looks like:
+
+```json
+{
+  "myMetricName": {
+    "type": "counter",
+    "count": 1
+  }
+}
+```
+
+**Meter**
+
+A Meter is another relatively simple metric which tracks events over time.  It can be activated by calling `myMetric.mark()`, which marks an event.  Meters track the total number of events along with their frequency.  Output looks like this:
+
+```json
+{
+  "myMetricName": {
+      "type": "meter",
+      "count": 2,
+      "m1": 0.16929634497812285,
+      "m5": 0.1934432200964012,
+      "m15": 0.19779007785878447,
+      "mean": 0.08485722771437057,
+      "unit": "seconds"
+    }
+}
+```
+
+**Histogram**
+
+A Histogram measures distribution of values and provides a lot more information than a Meter.  Histograms are modified by calling `myMetric.update(x)` where x is a numerical value.  Output:
+
+```json
+{
+  "myMetricName": {
+    "type": "histogram",
+    "min": 12,
+    "max": 52,
+    "sum": 152,
+    "variance": 250.3,
+    "mean": 30.4,
+    "std_dev": 15.820872289478858,
+    "count": 5,
+    "median": 35,
+    "p75": 43.5,
+    "p95": 52,
+    "p99": 52,
+    "p999": 52
+  }
+}
+```
+
+**Timer**
+
+The Timer measures time between events, and stores the results in both a Meter and a Histogram.  That is, the frequency of events (technically `.stop()` calls) is recorded in a Meter, and the duration of events (the time between `.time()` and `.stop()`) is stored in a Histogram.  As mentioned, Timers are activated with `myMetric.time()` and `myMetric.stop()`.  Here's the output:
+
+```json
+"myMetricName": {
+    "type": "timer",
+    "duration": {
+      "type": "histogram",
+      "min": 0.1,
+      "max": 0.25,
+      "sum": 0.35,
+      "variance": 0.15,
+      "mean": 0.175,
+      "std_dev": 0.106,
+      "count": 2
+    },
+    "rate": {
+      "type": "meter",
+      "count": 2,
+      "m1": 2,
+      "m5": 2,
+      "m15": 2,
+      "mean": 2,
+      "unit": "seconds"
+    }
+  }
+```
+
+Using Metadata
+--------------
 
 Metadata for metrics is included at creation time of a metric.  If none is provided, an empty object is used instead.  Types of metadata you might want to use include: type of metric, category, pretty name, link to documentation, data type, or units of measurement.  Metadata can be entered as an object literal or from JSON.  Metadata associated with a metric will be available through the /metricsmetadata endpoint if running the `Server` reporter.  For example, you could use an external JSON document (since this data rarely changes) and load it in your app:
 
@@ -89,7 +194,9 @@ var myCounter = new metrics.Counter(myMeta.myApp.groupA.thingA);
 
 Advanced Usage
 --------------
-Typical production deployments have multiple node processes per server.  Rather than each process exposing metrics on different ports, it makes more sense to expose the metrics from the "master" process.  Writing a thin wrapper around this api to perform the process communication is trivial, with a message passing setup, the client processes could look something like this:
+Typical production deployments have multiple Node processes per server.  Rather than each process exposing metrics on different ports, it makes more sense to expose the metrics from the "master" process.  
+
+Writing a thin wrapper around this api to perform the process communication is trivial, with a message passing setup, the client processes could look something like this:
 
 ```javascript
 var Metric = exports = module.exports = function Metrics(messagePasser, eventType) {
