@@ -15,6 +15,7 @@ var _evtparse = function (eventName){
 
 var Report = module.exports = function (trackedMetrics){
   this.trackedMetrics = trackedMetrics || {};
+  this.metadata = {};
 }
 
 Report.prototype.addMetric = function(eventName, metric) {
@@ -23,8 +24,14 @@ Report.prototype.addMetric = function(eventName, metric) {
   if (!this.trackedMetrics[parts.ns]) {
     this.trackedMetrics[parts.ns] = {};
   }
-  if(!this.trackedMetrics[parts.ns][parts.name]) {
+  if (!this.trackedMetrics[parts.ns][parts.name]) {
     this.trackedMetrics[parts.ns][parts.name] = metric;
+  }
+  if (!this.metadata[parts.ns]) {
+    this.metadata[parts.ns] = {};
+  }
+  if (!this.metadata[parts.ns][parts.name]) {
+    this.metadata[parts.ns][parts.name] = metric.metadata;
   }
 }
 
